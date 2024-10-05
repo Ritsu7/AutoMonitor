@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Stats Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        select {
+            padding: 5px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #current-selection {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #e2e2e2;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Vehicle Stats Dashboard</h1>
+
+    <div id="current-selection">
+        <h2>Current Selection</h2>
+        <p>Provider: <span id="current-provider">Select a provider</span></p>
+        <p>Date: <span id="current-date">Select a date</span></p>
+        <p>Current File: <span id="current-file">Select a file</span></p>
+    </div>
+
+    <label for="provider-select">Select Provider:</label>
+    <select id="provider-select"></select>
+
+    <label for="date-select">Select Date:</label>
+    <select id="date-select"></select>
+
+    <label for="files">Select Files:</label>
+    <select id="files"></select>
+
+    <table>
+        <thead>
+            <tr>
+                <th>BikeID</th>
+                <th>Reserved</th>
+                <th>Disabled</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>VehicleTypeID</th>
+                <th>RentalURI_IOS</th>
+                <th>RentalURI_Android</th>
+            </tr>
+        </thead>
+        <tbody id="dashboard-body"></tbody>
+    </table>
+
+    <script src="dist/bundle.js"></script>
+</body>
+</html>

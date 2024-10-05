@@ -1,0 +1,38 @@
+parameters:
+  - name: AppName
+    type: string # Name of the Azure Function App for deployment
+
+  - name: ServiceConnection
+    type: string # Azure service connection for authentication
+
+jobs:
+- job: Backend_Job
+  displayName: "Build & Deploy Backend Application"
+  timeoutInMinutes: 60
+
+  steps:
+  # Archive files into a zip package
+  - task: ArchiveFiles@2
+    displayName: Archive artifacts to Zip folder
+    inputs:
+      rootFolderOrFile: $(System.DefaultWorkingDirectory)/src/Backend-Function
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/umob-backend.zip'
+      replaceExistingArchive: true
+      verbose: # (no value); this input is optional
+
+  # Publish the archived build artifacts to the pipeline
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish to Pipeline Artifact'
+    inputs:
+      PathtoPublish: $(Build.ArtifactStagingDirectory)
+      ArtifactName: umob-backend
+
+   # Deploy the built backend application to Azure Function App
+  - task: AzureFunctionApp@1
+    inputs:
+      azureSubscription: '${{ parameters.ServiceConnection }}'
+      appType: 'functionApp'
+      appName: '${{ parameters.AppName }}'
+      package: '$(Build.ArtifactStagingDirectory)/umob-backend.zip'

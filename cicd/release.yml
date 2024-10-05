@@ -1,0 +1,70 @@
+trigger: none
+
+# Feature Flags got selective deployment & integration
+parameters:
+  - name: DeployUmobInfra
+    displayName: Build and Deploy UMOB Infra (TF)
+    type: boolean
+    default: true
+
+  - name: DeployFrontEndApp
+    displayName: Deploy FrontEndApp
+    type: boolean
+    default: true
+
+  - name: DeployBackEndApp
+    displayName: Deploy BackEndApp
+    type: boolean
+    default: true   
+
+# Repository Setting
+resources:
+  repositories:
+  - repository: Umob-Assignment
+    type: git
+    name: /Umob-Assignment
+    ref: $(Build.SourceBranch)
+
+# Create variable group as needed
+variables:
+- group: "umob-var"
+
+# Configure and Update the Name & Demands Accordingly if using Self-Hosted Agent
+pool:
+  name: UMOB-Agent
+  demands:
+    AGENT_IDENTIFIER -equals umob-selfhosted
+
+# Uncomment if you wish to use Microsoft-Hosted Agent
+# pool:
+#   vmImage: 'windows-latest'
+
+
+stages:
+# Infra Deployment Stage to Setup Resources in Azure Environment
+- stage: Infra_Deploy
+  displayName: "Deploy UMOB Base Infrastructure"
+  jobs:
+  - ${{ if parameters.DeployUmobInfra }}:
+    - template: ./infradeploy.yml
+      parameters:
+        command: deploy 
+        ServiceConnection: umob-service-connection
+
+# Application Build & Deployment Stage
+- stage: App_Build_Deploy
+  displayName: "Build and Deploy Applications"
+  dependsOn: Infra_Deploy
+  condition: succeeded()
+  jobs:
+  - ${{ if parameters.DeployBackEndApp }}:
+    - template: ./backendappdeploy.yml
+      parameters:
+        AppName: '$(FeedName)'
+        ServiceConnection: 'umob-service-connection'
+
+  - ${{ if parameters.DeployFrontEndApp }}:
+    - template: ./frontendappdeploy.yml
+      parameters:
+        AppName: 'umob-$(FeedName)-dev'
+        ServiceConnection: 'umob-service-connection'

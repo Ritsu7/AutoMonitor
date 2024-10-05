@@ -1,0 +1,99 @@
+parameters:
+  - name: command
+    type: string # Command to execute: deploy or destroy
+
+  - name: ServiceConnection
+    type: string # Azure service connection for authentication
+
+jobs:
+- job: Infrastructure_Job
+  displayName: "${{replace(parameters.command, 'd', 'D')}} Infrastructure"
+  timeoutInMinutes: 60
+  steps:
+    - checkout: self
+      fetchDepth: 1
+    
+     # Install the specified version of Terraform
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+      displayName: 'Install Terraform 1.9.6'
+      inputs:
+        terraformVersion: 1.9.6
+
+    # Authenticate with Azure using service principal credentials
+    - powershell: |
+        az login --service-principal -u  $(client_id) -p $(client_secret) --tenant $(tenant_id)
+
+     # Replace tokens in terraform.tfvars file for dynamic configuration
+    - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+      displayName: 'Replace tokens in tfvars'
+      inputs:
+        rootDirectory: $(Build.Repository.LocalPath)/infra
+        targetFiles: |
+          terraform.tfvars
+        tokenPrefix: '$('
+        tokenSuffix: ')'
+
+    # Display the content of terraform.tfvars for verification [Optional-Comment if needed]
+    - powershell: |
+        Get-Content -Path '$(Build.Repository.LocalPath)/infra/terraform.tfvars'
+      displayName: 'Test Parameter Values'
+
+    # Initialize Terraform configuration
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV2@2
+      displayName: 'Terraform Init'
+      inputs:
+        command: init
+        provider: azurerm
+        workingDirectory: $(Build.Repository.LocalPath)/infra
+        backendServiceArm: '${{ parameters.ServiceConnection }}'
+        backendAzureRmResourceGroupName: $(tf-backend-rg)
+        backendAzureRmStorageAccountName: $(tf-backend-storage-account)
+        backendAzureRmContainerName: $(tf-backend-container)
+        backendAzureRmKey: infra.terraform.tfstate
+      continueOnError: false
+    
+     # Destroy Terraform infrastructure if the command is 'destroy'
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV2@2
+      displayName: 'Terraform Destroy SAFHIR Infra'
+      condition: eq('${{ parameters.command }}', 'destroy')
+      inputs:
+        command: destroy
+        provider: azurerm
+        workingDirectory: $(Build.Repository.LocalPath)/infra
+        environmentServiceNameAzureRM: '${{ parameters.ServiceConnection }}'
+        backendAzureRmResourceGroupName: $(tf-backend-rg)
+        backendAzureRmStorageAccountName: $(tf-backend-storage-account)
+        backendAzureRmContainerName: $(tf-backend-container)
+        backendAzureRmKey: infra.terraform.tfstate
+      continueOnError: false
+
+     # Plan Terraform infrastructure if the command is 'deploy'
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV2@2
+      displayName: 'Terraform Plan Infra'
+      condition: eq('${{ parameters.command }}', 'deploy')
+      inputs:
+        command: plan
+        provider: azurerm
+        publishPlanResults: "Infrastructure Plan"
+        workingDirectory: $(Build.Repository.LocalPath)/infra
+        environmentServiceNameAzureRM: '${{ parameters.ServiceConnection }}'
+        backendAzureRmResourceGroupName: $(tf-backend-rg)
+        backendAzureRmStorageAccountName: $(tf-backend-storage-account)
+        backendAzureRmContainerName: $(tf-backend-container)
+        backendAzureRmKey: infra.terraform.tfstate
+      continueOnError: false
+
+      #Apply Terraform changes if the command is 'deploy' and previous steps succeeded
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV2@2
+      displayName: 'Terraform Deploy Infra'
+      name: terraformApply
+      condition: and(eq('${{ parameters.command }}', 'deploy'), succeeded())
+      inputs:
+        command: apply
+        provider: azurerm
+        workingDirectory: $(Build.Repository.LocalPath)/infra
+        environmentServiceNameAzureRM: '${{ parameters.ServiceConnection }}'
+        backendAzureRmResourceGroupName: $(tf-backend-rg)
+        backendAzureRmStorageAccountName: $(tf-backend-storage-account)
+        backendAzureRmContainerName: $(tf-backend-container)
+        backendAzureRmKey: infra.terraform.tfstate

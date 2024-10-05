@@ -1,0 +1,29 @@
+{
+  "name": "vehicle-stats-dashboard",
+  "version": "1.0.0",
+  "description": "A dashboard for displaying vehicle station statistics.",
+  "main": "script.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "lite-server"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.4.1",
+    "@azure/storage-blob": "^12.25.0",
+    "buffer": "^6.0.3",
+    "express": "^4.21.0",
+    "http-server": "^0.12.3"
+  },
+  "keywords": [
+    "vehicle",
+    "dashboard",
+    "stats"
+  ],
+  "author": "Naveen V",
+  "license": "MIT",
+  "devDependencies": {
+    "lite-server": "^2.6.1",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4"
+  }
+}

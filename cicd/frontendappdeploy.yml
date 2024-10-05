@@ -1,0 +1,68 @@
+parameters:
+  - name: AppName
+    type: string # Name of the Azure Web App for deployment
+
+  - name: ServiceConnection
+    type: string # Azure service connection for authentication
+
+
+jobs:
+- job: Frontend_Job
+  displayName: "Build & Deploy Frontend Application" 
+  timeoutInMinutes: 60
+
+  steps:
+  # Use Node.js version 14.x for building the application
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '14.x'
+
+  # Replace tokens in the script.js file for dynamic configuration
+  - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+    displayName: 'Replace tokens in tfvars'
+    inputs:
+      rootDirectory: $(System.DefaultWorkingDirectory)/src/Frontend-UI
+      targetFiles: |
+        script.js
+      tokenPrefix: '$('
+      tokenSuffix: ')'
+
+  # Install necessary npm packages for the frontend application
+  - powershell: | 
+      npm install
+      npm install @azure/identity @azure/storage-blob express lite-server webpack webpack-cli dotenv-webpack
+    workingDirectory: $(System.DefaultWorkingDirectory)/src/Frontend-UI
+    displayName: 'Install npm packages'
+    errorActionPreference: continue
+
+   # Build the frontend project using npm
+  - powershell: | 
+      npm run build
+    workingDirectory: $(System.DefaultWorkingDirectory)/src/Frontend-UI
+    displayName: 'Build project'
+    errorActionPreference: continue
+
+  # Archive the build output into a zip file
+  - task: ArchiveFiles@2
+    displayName: Archive artifacts to Zip folder
+    inputs:
+      rootFolderOrFile: '$(System.DefaultWorkingDirectory)/src/Frontend-UI'
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/umob-frontend.zip'
+      replaceExistingArchive: true
+      verbose: # (no value); this input is optional
+
+  # Publish the archived build artifacts to the pipeline
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish to Pipeline Artifact'
+    inputs:
+      PathtoPublish: $(Build.ArtifactStagingDirectory)
+      ArtifactName: umob-frontend 
+
+  # Deploy the built frontend application to Azure Web App
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: '${{ parameters.ServiceConnection }}'
+      appName: '${{ parameters.AppName }}'
+      package: '$(Build.ArtifactStagingDirectory)/umob-frontend.zip'
