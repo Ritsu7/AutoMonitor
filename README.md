@@ -8,6 +8,12 @@ The Vehicle Status Dashboard is a dynamic web application that provides real-tim
 - **Data Storage:** Uses Azure Blob Storage to store JSON data files for efficient access and management.
 - **Event-Driven Updates:** Utilizes Azure Functions (written in PowerShell) for scheduled data fetching.
 
+## Application URL
+
+You can access the Vehicle Status Dashboard at the following link: [Sample App]
+
+[Vehicle Status Dashboard](https://umob-gbfs-tracker-dev.azurewebsites.net/)
+
 ## Architecture
 
  ![Architecture](images/Vehicle_Status_Dashbaord.png)
@@ -173,26 +179,24 @@ To create a new Azure DevOps pipeline using an existing YAML file, follow these 
 1. **Save and Run:**
    Click on the **Save and run** button to create and trigger the pipeline. You can also choose to just save it if you want to run it later.
 
-2. **Monitor Your Pipeline:**
+2. **Deployment Option:**
+    Choose two [Infra is must] of the following options using the radio buttons:
+    Build and Deploy UMOB Infra (TF)
+    Deploy FrontEndApp
+    Deploy BackEndApp
+
+3. **Run the Pipeline:**
+    Trigger the pipeline execution by clicking the "Run" button after selecting the desired deployment option.
+
+  ![PieplineExecution](images/Pipeline_Execution.jpg)
+
+4. **Monitor Your Pipeline:**
    Once the pipeline is created, you can monitor its progress in the **Pipelines** section. Click on the pipeline name to view details, logs, and results.
 
 ### Additional Notes
 
 - Ensure that your YAML file is properly configured with all necessary tasks and variables.
 - You may need the appropriate permissions to create and run pipelines in your Azure DevOps project.
-
-### Step 5: Pipeline Execution
-
-1. **Deployment Option:**
-    Choose two [Infra is must] of the following options using the radio buttons:
-    Build and Deploy UMOB Infra (TF)
-    Deploy FrontEndApp
-    Deploy BackEndApp
-
-2. **Run the Pipeline:**
-    Trigger the pipeline execution by clicking the "Run" button after selecting the desired deployment option.
-
-  ![PieplineExecution](images/Pipeline_Execution.jpg)
 
 ## Things I Would Change if I Had More Time
 
