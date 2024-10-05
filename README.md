@@ -180,3 +180,39 @@ To create a new Azure DevOps pipeline using an existing YAML file, follow these 
 
 - Ensure that your YAML file is properly configured with all necessary tasks and variables.
 - You may need the appropriate permissions to create and run pipelines in your Azure DevOps project.
+
+### Step 5: Pipeline Execution
+
+1. **Deployment Option:**
+    Choose two [Infra is must] of the following options using the radio buttons:
+    Build and Deploy UMOB Infra (TF)
+    Deploy FrontEndApp
+    Deploy BackEndApp
+
+2. **Run the Pipeline:**
+    Trigger the pipeline execution by clicking the "Run" button after selecting the desired deployment option.
+
+  ![PieplineExecution](images/Pipeline_Execution.jpg)
+
+## Things I Would Change if I Had More Time
+
+If I had more time, here are some things I would consider changing or improving:
+
+1. **User Interface Refinements:**
+
+- Enhance the UI/UX for better user experience.
+- Add visualizations or charts for data representation.
+
+2. **Error Handling and Logging:**
+
+- Improve error handling throughout the application.
+- Add structured logging for better monitoring and debugging.
+
+3. **Code Refactoring:**
+
+- Review and refactor the codebase for better readability and maintainability.
+
+4. **Security Enhancements:**
+
+- Conduct a thorough security audit of the application.
+- Implement measures such as input validation, sanitization, and authentication to safeguard against vulnerabilities.
