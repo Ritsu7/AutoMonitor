@@ -19,6 +19,7 @@ This project employs a variety of technologies to create a robust and interactiv
 - **Frontend:**
   - HTML/CSS: Core technologies for structuring and styling the user interface.
   - JavaScript: Used for dynamic functionality and interaction with the Azure Blob Storage API.
+    [Node.js](https://nodejs.org/) (for local development)
   - Azure SDK for JavaScript: Facilitates access to Azure Blob Storage for retrieving vehicle data files.
 
 - **Backend:**
@@ -28,19 +29,13 @@ This project employs a variety of technologies to create a robust and interactiv
 
 - **Infrastructure as Code:**
   - Terraform: Used for provisioning and managing cloud resources in Azure.
+    [Terraform](https://www.terraform.io/)
 
 - **Cloud Storage:**
   - Azure Blob Storage: Utilized for storing and retrieving vehicle data files in JSON format, enabling efficient data management and access.
 
 ### Data Handling
 - **JSON:** The format used for data files stored in Azure Blob Storage, allowing structured and easily consumable data.
-
-## Tech Stack
-
-- [Node.js](https://nodejs.org/) (for local development)
-- Azure account with Blob Storage, Azure DevOps, Function App & Web App setup
-- [Terraform](https://www.terraform.io/)
-
 
 ## Azure DevOps Configuration
 
