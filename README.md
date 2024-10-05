@@ -35,13 +35,14 @@ This project employs a variety of technologies to create a robust and interactiv
 ### Data Handling
 - **JSON:** The format used for data files stored in Azure Blob Storage, allowing structured and easily consumable data.
 
-### Prerequisites
+## Tech Stack
 
 - [Node.js](https://nodejs.org/) (for local development)
 - Azure account with Blob Storage, Azure DevOps, Function App & Web App setup
 - [Terraform](https://www.terraform.io/)
 
-### Azure DevOps Configuration
+
+## Azure DevOps Configuration
 
 Set the following Azure DevOps pipeline variables as prerequisites:
 1. **tf-backend-storage-account**
@@ -167,6 +168,7 @@ To create a new Azure DevOps pipeline using an existing YAML file, follow these 
 
 2. **Specify the YAML Path:**
    Provide the path to your existing YAML file in the repository. For example, if your YAML file is located at `.azure-pipelines/pipeline.yml`, enter that path.
+   Here Choose release.yml
 
 3. **Review Your Pipeline:**
    You will see a preview of your pipeline configuration based on the YAML file.
